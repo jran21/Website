@@ -3,876 +3,1147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jonathan Ran</title>
+<title>Jonathan Ran — Operator, Builder, Advocate.</title>
+<meta name="description" content="Jonathan Ran — Chief Operating Officer and Co-Founder of Neobotics Foundation Inc.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#0a0a0b;
-  --bg-elevated:#111113;
-  --bg-card:#161618;
-  --text:#e8e6e1;
-  --text-muted:#8a8880;
-  --text-dim:#5a5850;
-  --accent:#c9a96e;
-  --accent-light:#e0c992;
-  --accent-glow:rgba(201,169,110,0.08);
-  --serif:'Cormorant Garamond',Georgia,serif;
-  --sans:'DM Sans','Helvetica Neue',sans-serif;
+  --bg:#f2ece0;
+  --bg-soft:#eae2d0;
+  --bg-dark:#14120e;
+  --ink:#14120e;
+  --ink-soft:#3a3630;
+  --muted:#7a7568;
+  --dim:#a8a297;
+  --accent:#dc3d1f;
+  --accent-hover:#b83217;
+  --accent-soft:#f5c3b3;
+  --paper:#faf6ec;
+  --serif:'Fraunces','Times New Roman',serif;
+  --sans:'Instrument Sans','Helvetica Neue',sans-serif;
   --mono:'JetBrains Mono',monospace;
-  --ease-out-expo:cubic-bezier(0.16,1,0.3,1);
-  --ease-out-quart:cubic-bezier(0.25,1,0.5,1);
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --ease-bounce:cubic-bezier(0.68,-0.4,0.27,1.5);
 }
 html{scroll-behavior:smooth;font-size:16px;overflow-x:hidden}
 body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--sans);
-  font-weight:300;
-  line-height:1.7;
+  background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-weight:400;line-height:1.5;
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  cursor:none;
 }
-::selection{background:var(--accent);color:var(--bg)}
+::selection{background:var(--accent);color:var(--paper)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
 
-/* Noise overlay */
-body::before{
-  content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
-  opacity:0.025;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* ====== CUSTOM CURSOR ====== */
+.cursor{
+  position:fixed;top:0;left:0;
+  width:8px;height:8px;
+  background:var(--accent);border-radius:50%;
+  pointer-events:none;z-index:10001;
+  transform:translate(-50%,-50%);
+  transition:width 0.3s var(--ease),height 0.3s var(--ease),background 0.3s var(--ease);
+  mix-blend-mode:multiply;
 }
-
-/* Scroll progress */
-.scroll-progress{
-  position:fixed;top:0;left:0;height:2px;
-  background:linear-gradient(90deg,var(--accent),var(--accent-light));
-  z-index:10000;transform-origin:left;transform:scaleX(0);
-  transition:none;
+.cursor-ring{
+  position:fixed;top:0;left:0;
+  width:40px;height:40px;
+  border:1px solid var(--ink);border-radius:50%;
+  pointer-events:none;z-index:10000;
+  transform:translate(-50%,-50%);
+  transition:width 0.4s var(--ease),height 0.4s var(--ease),border-color 0.4s var(--ease),opacity 0.3s ease;
+  opacity:0.6;
 }
-
-/* Navigation */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:1000;
-  padding:1.5rem 3rem;
-  display:flex;justify-content:space-between;align-items:center;
-  transition:all 0.6s var(--ease-out-expo);
-}
-nav.scrolled{
-  background:rgba(10,10,11,0.85);
-  backdrop-filter:blur(20px) saturate(1.2);
-  -webkit-backdrop-filter:blur(20px) saturate(1.2);
-  padding:1rem 3rem;
-  border-bottom:1px solid rgba(201,169,110,0.08);
-}
-.nav-logo{
-  font-family:var(--serif);font-size:1.25rem;font-weight:500;
-  letter-spacing:0.02em;color:var(--text);
-  text-decoration:none;
-}
-.nav-logo span{color:var(--accent)}
-.nav-links{display:flex;gap:2.5rem;list-style:none}
-.nav-links a{
-  font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;
-  color:var(--text-muted);text-decoration:none;
-  position:relative;transition:color 0.3s ease;
-  font-weight:400;
-}
-.nav-links a::after{
-  content:'';position:absolute;bottom:-4px;left:0;
-  width:0;height:1px;background:var(--accent);
-  transition:width 0.4s var(--ease-out-expo);
-}
-.nav-links a:hover{color:var(--text)}
-.nav-links a:hover::after{width:100%}
-
-/* Reveal animations */
-.reveal{
-  opacity:0;transform:translateY(40px);
-  transition:opacity 0.9s var(--ease-out-expo),transform 0.9s var(--ease-out-expo);
-}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-left{
-  opacity:0;transform:translateX(-60px);
-  transition:opacity 0.9s var(--ease-out-expo),transform 0.9s var(--ease-out-expo);
-}
-.reveal-left.visible{opacity:1;transform:translateX(0)}
-.reveal-right{
-  opacity:0;transform:translateX(60px);
-  transition:opacity 0.9s var(--ease-out-expo),transform 0.9s var(--ease-out-expo);
-}
-.reveal-right.visible{opacity:1;transform:translateX(0)}
-.reveal-scale{
-  opacity:0;transform:scale(0.92);
-  transition:opacity 0.9s var(--ease-out-expo),transform 0.9s var(--ease-out-expo);
-}
-.reveal-scale.visible{opacity:1;transform:scale(1)}
-
-/* Stagger children */
-.stagger-children .reveal:nth-child(1){transition-delay:0s}
-.stagger-children .reveal:nth-child(2){transition-delay:0.1s}
-.stagger-children .reveal:nth-child(3){transition-delay:0.2s}
-.stagger-children .reveal:nth-child(4){transition-delay:0.3s}
-.stagger-children .reveal:nth-child(5){transition-delay:0.4s}
-.stagger-children .reveal:nth-child(6){transition-delay:0.5s}
-
-/* ======================== HERO ======================== */
-.hero{
-  min-height:100vh;display:flex;flex-direction:column;
-  justify-content:center;position:relative;
-  padding:0 8vw;overflow:hidden;
-}
-.hero-bg{
-  position:absolute;inset:0;z-index:0;
-}
-.hero-bg::before{
-  content:'';position:absolute;
-  width:800px;height:800px;
-  top:-200px;right:-200px;
-  background:radial-gradient(circle,rgba(201,169,110,0.06) 0%,transparent 70%);
-  animation:pulse-glow 8s ease-in-out infinite;
-}
-.hero-bg::after{
-  content:'';position:absolute;
-  width:600px;height:600px;
-  bottom:-100px;left:-100px;
-  background:radial-gradient(circle,rgba(201,169,110,0.03) 0%,transparent 70%);
-  animation:pulse-glow 8s ease-in-out 4s infinite;
-}
-@keyframes pulse-glow{
-  0%,100%{opacity:0.5;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.1)}
+body.hovering .cursor{width:20px;height:20px;background:var(--accent)}
+body.hovering .cursor-ring{width:60px;height:60px;border-color:var(--accent);opacity:0.3}
+body.text-hovering .cursor{width:3px;height:30px;border-radius:2px;background:var(--accent)}
+body.text-hovering .cursor-ring{opacity:0}
+@media(max-width:900px),(pointer:coarse){
+  body{cursor:auto}
+  .cursor,.cursor-ring{display:none}
 }
 
-.hero-grid{
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(201,169,110,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(201,169,110,0.03) 1px,transparent 1px);
-  background-size:80px 80px;
-  mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black 20%,transparent 100%);
-  -webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black 20%,transparent 100%);
+/* ====== GRAIN ====== */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  opacity:0.035;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.hero-content{position:relative;z-index:1}
-.hero-overline{
-  font-family:var(--mono);font-size:0.7rem;
-  letter-spacing:0.3em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:2rem;
-  display:flex;align-items:center;gap:1rem;
-  opacity:0;animation:hero-fade 1s var(--ease-out-expo) 0.3s forwards;
-}
-.hero-overline::before{
-  content:'';width:40px;height:1px;background:var(--accent);
-}
-.hero-name{
-  font-family:var(--serif);font-weight:300;
-  font-size:clamp(3.5rem,8vw,8rem);
-  line-height:0.95;letter-spacing:-0.02em;
-  color:var(--text);margin-bottom:1.5rem;
-}
-.hero-name .line{
-  display:block;overflow:hidden;
-}
-.hero-name .line-inner{
-  display:block;
-  opacity:0;transform:translateY(100%);
-  animation:hero-slide 1.2s var(--ease-out-expo) forwards;
-}
-.hero-name .line:nth-child(2) .line-inner{animation-delay:0.15s}
-.hero-name .line .accent{color:var(--accent)}
-
-.hero-desc{
-  font-size:1.15rem;color:var(--text-muted);
-  max-width:500px;font-weight:300;
-  margin-bottom:3rem;
-  opacity:0;animation:hero-fade 1s var(--ease-out-expo) 0.7s forwards;
-}
-
-.hero-cta-group{
-  display:flex;gap:1.5rem;align-items:center;
-  opacity:0;animation:hero-fade 1s var(--ease-out-expo) 0.9s forwards;
-}
-.hero-cta{
-  display:inline-flex;align-items:center;gap:0.75rem;
-  padding:0.9rem 2.2rem;
-  border:1px solid var(--accent);color:var(--accent);
-  text-decoration:none;font-size:0.75rem;
-  letter-spacing:0.15em;text-transform:uppercase;
-  font-weight:500;position:relative;overflow:hidden;
-  transition:color 0.4s ease,border-color 0.4s ease;
-}
-.hero-cta::before{
-  content:'';position:absolute;inset:0;
-  background:var(--accent);
-  transform:translateY(101%);
-  transition:transform 0.4s var(--ease-out-expo);
-}
-.hero-cta:hover{color:var(--bg);border-color:var(--accent)}
-.hero-cta:hover::before{transform:translateY(0)}
-.hero-cta span{position:relative;z-index:1}
-.hero-cta svg{position:relative;z-index:1;transition:transform 0.3s ease}
-.hero-cta:hover svg{transform:translateX(4px)}
-
-.hero-cta-secondary{
-  color:var(--text-muted);text-decoration:none;
-  font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;
-  transition:color 0.3s ease;font-weight:400;
-}
-.hero-cta-secondary:hover{color:var(--text)}
-
-.hero-scroll{
-  position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:0.75rem;
-  opacity:0;animation:hero-fade 1s var(--ease-out-expo) 1.3s forwards;
-}
-.hero-scroll span{
-  font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;
-  color:var(--text-dim);
-}
-.scroll-line{
-  width:1px;height:40px;position:relative;overflow:hidden;
-  background:rgba(201,169,110,0.15);
-}
-.scroll-line::after{
-  content:'';position:absolute;top:-100%;left:0;
-  width:1px;height:100%;background:var(--accent);
-  animation:scroll-pulse 2s ease-in-out infinite;
-}
-@keyframes scroll-pulse{
-  0%{top:-100%}50%{top:100%}100%{top:100%}
-}
-@keyframes hero-slide{
-  to{opacity:1;transform:translateY(0)}
-}
-@keyframes hero-fade{
-  to{opacity:1}
-}
-
-/* Headshot */
-.hero-portrait{
-  position:absolute;right:8vw;top:50%;transform:translateY(-50%);
-  z-index:1;
-  opacity:0;animation:hero-fade 1.2s var(--ease-out-expo) 0.5s forwards;
-}
-.hero-portrait-frame{
-  position:relative;width:320px;height:400px;
-}
-.hero-portrait-frame::before{
-  content:'';position:absolute;inset:-12px;
-  border:1px solid rgba(201,169,110,0.15);
-  transition:border-color 0.4s ease;
-}
-.hero-portrait-frame::after{
-  content:'';position:absolute;inset:-24px;
-  border:1px solid rgba(201,169,110,0.06);
-}
-.hero-portrait-frame:hover::before{
-  border-color:rgba(201,169,110,0.3);
-}
-.hero-portrait-img{
-  width:100%;height:100%;object-fit:cover;object-position:center top;
-  filter:grayscale(0.2) contrast(1.05);
-  transition:filter 0.6s ease;
-}
-.hero-portrait-frame:hover .hero-portrait-img{
-  filter:grayscale(0) contrast(1.1);
-}
-.hero-portrait-accent{
-  position:absolute;bottom:-20px;right:-20px;
-  width:80px;height:80px;
-  border-right:2px solid var(--accent);
-  border-bottom:2px solid var(--accent);
-  opacity:0.4;
-}
-.hero-portrait-label{
-  position:absolute;bottom:-45px;left:0;
-  font-family:var(--mono);font-size:0.6rem;
-  letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--text-dim);
-}
-
-/* ======================== SECTIONS ======================== */
-section{padding:10rem 8vw;position:relative}
-
-.section-label{
-  font-family:var(--mono);font-size:0.65rem;
-  letter-spacing:0.3em;text-transform:uppercase;
-  color:var(--accent);display:flex;align-items:center;gap:1rem;
-  margin-bottom:3rem;
-}
-.section-label::before{
-  content:'';width:30px;height:1px;background:var(--accent);
-}
-.section-label .num{color:var(--text-dim);margin-right:0.5rem}
-
-.section-heading{
-  font-family:var(--serif);font-weight:300;
-  font-size:clamp(2.5rem,5vw,4.5rem);
-  line-height:1.1;letter-spacing:-0.02em;
-  margin-bottom:3rem;
-}
-.section-heading em{
-  font-style:italic;color:var(--accent);font-weight:300;
-}
-
-/* ======================== ABOUT ======================== */
-.about{background:var(--bg)}
-.about-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:6rem;
-  align-items:start;margin-top:4rem;
-}
-.about-text p{
-  font-size:1.05rem;color:var(--text-muted);
-  margin-bottom:1.5rem;line-height:1.8;
-}
-.about-text p strong{color:var(--text);font-weight:500}
-.about-highlight{
-  padding:2.5rem;border-left:2px solid var(--accent);
-  background:var(--accent-glow);margin-top:2rem;
-}
-.about-highlight p{
-  font-family:var(--serif);font-size:1.3rem;
-  font-style:italic;color:var(--text);line-height:1.6;
-  font-weight:300;margin:0;
-}
-
-.about-stats{
-  display:grid;grid-template-columns:1fr 1fr;gap:2rem;
-}
-.stat-card{
-  padding:2.5rem;background:var(--bg-card);
-  border:1px solid rgba(255,255,255,0.04);
-  position:relative;overflow:hidden;
-  transition:border-color 0.4s ease,transform 0.4s var(--ease-out-expo);
-}
-.stat-card:hover{
-  border-color:rgba(201,169,110,0.15);
-  transform:translateY(-4px);
-}
-.stat-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--accent),transparent);
-  opacity:0;transition:opacity 0.4s ease;
-}
-.stat-card:hover::before{opacity:1}
-.stat-number{
-  font-family:var(--serif);font-size:3rem;font-weight:300;
-  color:var(--accent);line-height:1;margin-bottom:0.5rem;
-}
-.stat-label{
-  font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;
-  color:var(--text-muted);font-weight:400;
-}
-.stat-desc{
-  font-size:0.85rem;color:var(--text-dim);margin-top:0.75rem;line-height:1.5;
-}
-
-/* ======================== EXPERIENCE ======================== */
-.experience{
-  background:var(--bg-elevated);
-  border-top:1px solid rgba(255,255,255,0.03);
-  border-bottom:1px solid rgba(255,255,255,0.03);
-}
-.exp-container{margin-top:4rem}
-
-.exp-item{
-  display:grid;grid-template-columns:200px 1fr;gap:4rem;
-  padding:3.5rem 0;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  position:relative;
-}
-.exp-item:first-child{border-top:1px solid rgba(255,255,255,0.04)}
-
-.exp-date{
-  font-family:var(--mono);font-size:0.75rem;
-  color:var(--text-dim);letter-spacing:0.05em;
-  padding-top:0.5rem;
-}
-.exp-date .year{
-  display:block;font-size:1.8rem;font-family:var(--serif);
-  color:var(--accent);font-weight:300;margin-bottom:0.25rem;
-  letter-spacing:-0.02em;
-}
-
-.exp-content h3{
-  font-family:var(--serif);font-size:1.8rem;font-weight:400;
-  margin-bottom:0.5rem;letter-spacing:-0.01em;
-}
-.exp-content .role{
-  font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--accent);font-weight:500;margin-bottom:1.25rem;
-}
-.exp-content p{
-  color:var(--text-muted);font-size:0.95rem;line-height:1.8;
-  max-width:600px;
-}
-.exp-tags{
-  display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1.25rem;
-}
-.exp-tag{
-  padding:0.3rem 0.85rem;
-  font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
-  border:1px solid rgba(201,169,110,0.2);color:var(--accent);
-  font-weight:400;
-}
-
-/* ======================== EDUCATION ======================== */
-.education{background:var(--bg)}
-.edu-card{
-  margin-top:4rem;
-  display:grid;grid-template-columns:1fr 1fr;
-  background:var(--bg-card);border:1px solid rgba(255,255,255,0.04);
-  overflow:hidden;position:relative;
-}
-.edu-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,var(--accent),transparent);
-}
-.edu-visual{
-  padding:5rem;display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-  background:linear-gradient(135deg,rgba(201,169,110,0.04),transparent);
-  position:relative;
-}
-.edu-logo{
-  max-width:280px;width:100%;
-  filter:brightness(1.1);
-  transition:transform 0.4s var(--ease-out-expo);
-}
-.edu-visual:hover .edu-logo{
-  transform:scale(1.03);
-}
-.edu-info{padding:5rem;display:flex;flex-direction:column;justify-content:center}
-.edu-info h3{
-  font-family:var(--serif);font-size:2.2rem;font-weight:300;
-  margin-bottom:0.5rem;letter-spacing:-0.01em;
-}
-.edu-info .degree{
-  font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--accent);font-weight:500;margin-bottom:1.5rem;
-}
-.edu-info p{
-  color:var(--text-muted);font-size:0.95rem;line-height:1.8;
-}
-.edu-meta{
-  display:flex;gap:2.5rem;margin-top:2rem;
-  padding-top:2rem;border-top:1px solid rgba(255,255,255,0.04);
-}
-.edu-meta-item .label{
-  font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--text-dim);margin-bottom:0.25rem;
-}
-.edu-meta-item .value{
-  font-family:var(--serif);font-size:1.1rem;color:var(--text);font-weight:400;
-}
-
-/* ======================== CONTACT ======================== */
-.contact{
-  background:var(--bg-elevated);
-  border-top:1px solid rgba(255,255,255,0.03);
-  text-align:center;padding:12rem 8vw;
-}
-.contact .section-label{justify-content:center}
-.contact .section-heading{margin-bottom:1.5rem}
-.contact-sub{
-  font-size:1.05rem;color:var(--text-muted);
-  max-width:500px;margin:0 auto 4rem;line-height:1.8;
-}
-.contact-links{
-  display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;
-}
-.contact-card{
-  padding:2.5rem 3rem;background:var(--bg-card);
-  border:1px solid rgba(255,255,255,0.04);
-  text-decoration:none;min-width:240px;
-  transition:border-color 0.4s ease,transform 0.4s var(--ease-out-expo);
-  position:relative;overflow:hidden;
-}
-.contact-card:hover{
-  border-color:rgba(201,169,110,0.2);
-  transform:translateY(-4px);
-}
-.contact-card::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
-  background:var(--accent);transform:scaleX(0);
-  transition:transform 0.4s var(--ease-out-expo);
-}
-.contact-card:hover::after{transform:scaleX(1)}
-.contact-card-label{
-  font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;
-  color:var(--text-dim);margin-bottom:0.75rem;display:block;
-}
-.contact-card-value{
-  font-family:var(--serif);font-size:1.15rem;color:var(--text);
-  font-weight:400;display:block;
-}
-
-/* ======================== FOOTER ======================== */
-footer{
-  padding:3rem 8vw;
-  border-top:1px solid rgba(255,255,255,0.04);
-  display:flex;justify-content:space-between;align-items:center;
-  background:var(--bg);
-}
-footer p{
-  font-size:0.7rem;color:var(--text-dim);
-  letter-spacing:0.1em;
-}
-.footer-back{
-  font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;
-  color:var(--text-dim);text-decoration:none;
-  transition:color 0.3s ease;
-}
-.footer-back:hover{color:var(--accent)}
-
-/* ======================== PARALLAX DECORATIONS ======================== */
-.floating-element{
-  position:absolute;pointer-events:none;
-  border:1px solid rgba(201,169,110,0.06);
+/* ====== PROGRESS ====== */
+.progress{
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;
+  background:transparent;
+}
+.progress-bar{
+  height:100%;width:100%;background:var(--accent);
+  transform-origin:left;transform:scaleX(0);
   transition:transform 0.1s linear;
 }
 
-/* ======================== RESPONSIVE ======================== */
+/* ====== NAV ====== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:1.5rem 2.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+  mix-blend-mode:difference;
+  color:var(--paper);
+  pointer-events:none;
+}
+nav > *{pointer-events:auto}
+.nav-mark{
+  font-family:var(--serif);font-weight:500;font-style:italic;
+  font-size:1.5rem;letter-spacing:-0.02em;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.nav-mark-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--accent);
+  animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot{
+  0%,100%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.4);opacity:0.7}
+}
+.nav-links{
+  display:flex;gap:2.5rem;list-style:none;
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+}
+.nav-links a{
+  position:relative;padding:0.5rem 0;
+  transition:opacity 0.3s ease;
+}
+.nav-links a::before{
+  content:attr(data-num);margin-right:0.5rem;opacity:0.5;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:0;
+  width:0;height:1px;background:currentColor;
+  transition:width 0.4s var(--ease);
+}
+.nav-links a:hover::after{width:100%}
+.nav-time{
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.1em;text-transform:uppercase;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.nav-time-dot{
+  width:6px;height:6px;border-radius:50%;background:#5ac85a;
+  box-shadow:0 0 8px #5ac85a;
+}
+
+/* ====== REVEAL ====== */
+.split-line{display:block;overflow:hidden;padding-bottom:0.05em}
+.split-line-inner{
+  display:block;
+  transform:translateY(110%);
+  transition:transform 1s var(--ease);
+}
+.split-line.in .split-line-inner{transform:translateY(0)}
+
+.word-reveal .word{
+  display:inline-block;overflow:hidden;vertical-align:baseline;
+}
+.word-reveal .word-inner{
+  display:inline-block;
+  transform:translateY(110%);
+  opacity:0;
+  transition:transform 0.9s var(--ease),opacity 0.9s var(--ease);
+}
+.word-reveal.in .word-inner{transform:translateY(0);opacity:1}
+
+.fade-up{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.fade-up.in{opacity:1;transform:translateY(0)}
+.fade-in{opacity:0;transition:opacity 1.2s var(--ease)}
+.fade-in.in{opacity:1}
+.scale-in{opacity:0;transform:scale(0.94);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.scale-in.in{opacity:1;transform:scale(1)}
+
+/* ====== HERO ====== */
+.hero{
+  min-height:100vh;position:relative;
+  padding:8rem 2.5rem 2.5rem;
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;
+  align-items:center;overflow:hidden;
+}
+.hero-meta{
+  position:absolute;top:7rem;left:2.5rem;right:2.5rem;
+  display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--muted);
+}
+.hero-meta span:first-child{color:var(--accent)}
+
+.hero-text{position:relative;z-index:2}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--ink);margin-bottom:2rem;
+  display:inline-flex;align-items:center;gap:0.75rem;
+  padding:0.5rem 1rem;
+  background:var(--paper);border:1px solid var(--ink);
+}
+.hero-eyebrow::before{
+  content:'';width:6px;height:6px;background:var(--accent);
+}
+
+.hero-h1{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(4rem,11vw,11rem);
+  line-height:0.88;letter-spacing:-0.035em;
+  margin-bottom:2rem;
+  font-variation-settings:'opsz' 144;
+}
+.hero-h1 .italic{font-style:italic;font-weight:300;color:var(--accent)}
+.hero-h1 .amp{
+  font-family:var(--serif);font-style:italic;font-weight:300;
+  color:var(--accent);
+}
+
+.hero-desc{
+  font-size:1.125rem;color:var(--ink-soft);
+  max-width:440px;line-height:1.6;font-weight:400;
+  margin-bottom:3rem;
+}
+.hero-desc strong{font-weight:600;color:var(--ink)}
+
+.hero-ctas{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:0.75rem;
+  padding:1.1rem 2rem;
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  font-weight:500;
+  position:relative;overflow:hidden;
+  transition:color 0.5s var(--ease),background 0.5s var(--ease),transform 0.3s var(--ease);
+  border-radius:999px;
+}
+.btn-primary{background:var(--ink);color:var(--paper)}
+.btn-primary::before{
+  content:'';position:absolute;inset:0;
+  background:var(--accent);
+  transform:scale(0);transform-origin:center;
+  transition:transform 0.5s var(--ease);
+  border-radius:50%;
+}
+.btn-primary:hover::before{transform:scale(1.5)}
+.btn-primary span,.btn-primary svg{position:relative;z-index:1}
+.btn-primary svg{transition:transform 0.3s var(--ease)}
+.btn-primary:hover svg{transform:translateX(4px) rotate(-45deg)}
+
+.btn-ghost{
+  border:1px solid var(--ink);color:var(--ink);
+  background:transparent;
+}
+.btn-ghost:hover{background:var(--ink);color:var(--paper)}
+
+/* ====== HERO PORTRAIT ====== */
+.hero-portrait{
+  position:relative;z-index:2;
+  aspect-ratio:4/5;max-height:70vh;
+  justify-self:end;width:100%;max-width:480px;
+}
+.hero-portrait-wrap{
+  position:relative;width:100%;height:100%;
+  overflow:hidden;
+  clip-path:polygon(0 0,100% 0,100% 100%,15% 100%,0 85%);
+  transition:clip-path 0.8s var(--ease);
+}
+.hero-portrait-wrap:hover{
+  clip-path:polygon(5% 5%,100% 0,95% 100%,15% 95%,0 80%);
+}
+.hero-portrait-img{
+  width:100%;height:100%;object-fit:cover;object-position:center top;
+  transition:transform 1s var(--ease),filter 0.6s ease;
+  filter:contrast(1.05) saturate(0.92);
+}
+.hero-portrait-wrap:hover .hero-portrait-img{
+  transform:scale(1.04);
+  filter:contrast(1.1) saturate(1);
+}
+.hero-portrait-tag{
+  position:absolute;left:-2rem;top:2rem;
+  font-family:var(--mono);font-size:0.65rem;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);
+  writing-mode:vertical-rl;transform:rotate(180deg);
+}
+.hero-portrait-badge{
+  position:absolute;bottom:-1.5rem;right:-1.5rem;
+  width:120px;height:120px;
+  background:var(--accent);color:var(--paper);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1rem;
+  font-family:var(--mono);font-size:0.6rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  font-weight:500;line-height:1.4;
+  animation:badge-spin 20s linear infinite;
+}
+.hero-portrait-badge-inner{
+  animation:badge-spin-reverse 20s linear infinite;
+}
+@keyframes badge-spin{
+  from{transform:rotate(0)}to{transform:rotate(360deg)}
+}
+@keyframes badge-spin-reverse{
+  from{transform:rotate(0)}to{transform:rotate(-360deg)}
+}
+
+.hero-scroll-hint{
+  position:absolute;bottom:2rem;left:2.5rem;
+  font-family:var(--mono);font-size:0.65rem;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);
+  display:flex;align-items:center;gap:0.75rem;
+}
+.hero-scroll-hint::before{
+  content:'';width:30px;height:1px;background:var(--ink);
+  animation:line-pulse 2s ease-in-out infinite;
+}
+@keyframes line-pulse{
+  0%,100%{transform:scaleX(1);opacity:1}
+  50%{transform:scaleX(0.3);opacity:0.4}
+}
+
+/* ====== MARQUEE ====== */
+.marquee{
+  background:var(--ink);color:var(--paper);
+  padding:2rem 0;overflow:hidden;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  position:relative;
+}
+.marquee-track{
+  display:flex;gap:3rem;
+  white-space:nowrap;
+  animation:marquee 40s linear infinite;
+  font-family:var(--serif);
+  font-size:clamp(3rem,7vw,6rem);
+  font-weight:400;line-height:1;
+  letter-spacing:-0.02em;
+}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-item{
+  display:flex;align-items:center;gap:3rem;
+}
+.marquee-item.italic{font-style:italic;color:var(--accent)}
+.marquee-star{
+  width:36px;height:36px;flex-shrink:0;
+  color:var(--accent);
+}
+@keyframes marquee{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+/* ====== SECTIONS ====== */
+section{padding:8rem 2.5rem;position:relative}
+.section-header{
+  display:grid;grid-template-columns:1fr 2fr;gap:4rem;
+  margin-bottom:6rem;align-items:end;
+}
+.section-kicker{
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--accent);
+  display:flex;align-items:center;gap:1rem;
+  padding-bottom:0.5rem;border-bottom:1px solid var(--ink);
+}
+.section-kicker::before{
+  content:'';width:10px;height:10px;background:var(--accent);border-radius:50%;
+}
+.section-h2{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(2.5rem,5.5vw,5rem);
+  line-height:0.95;letter-spacing:-0.03em;
+  font-variation-settings:'opsz' 144;
+}
+.section-h2 em{
+  font-style:italic;font-weight:300;color:var(--accent);
+}
+.section-h2 .underline{
+  background-image:linear-gradient(var(--accent),var(--accent));
+  background-size:100% 4px;background-position:0 100%;
+  background-repeat:no-repeat;padding-bottom:2px;
+}
+
+/* ====== ABOUT ====== */
+.about{background:var(--bg)}
+.about-body{
+  display:grid;grid-template-columns:5fr 3fr 4fr;gap:3rem;
+  align-items:start;
+}
+.about-col{position:relative}
+.about-lead{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(1.5rem,2.2vw,2rem);
+  line-height:1.35;letter-spacing:-0.01em;
+  color:var(--ink);
+  font-variation-settings:'opsz' 72;
+}
+.about-lead em{font-style:italic;color:var(--accent);font-weight:400}
+
+.about-body-text{
+  font-size:1rem;color:var(--ink-soft);line-height:1.75;
+}
+.about-body-text p+p{margin-top:1.25rem}
+
+.about-stats{
+  display:flex;flex-direction:column;gap:0;
+  border-top:1px solid var(--ink);
+}
+.about-stat{
+  padding:1.5rem 0;
+  border-bottom:1px solid var(--ink);
+  display:flex;justify-content:space-between;align-items:baseline;
+  position:relative;overflow:hidden;
+}
+.about-stat::before{
+  content:'';position:absolute;inset:0;
+  background:var(--accent);
+  transform:translateX(-100%);
+  transition:transform 0.5s var(--ease);
+  z-index:0;
+}
+.about-stat:hover::before{transform:translateX(0)}
+.about-stat:hover *{color:var(--paper)!important;position:relative;z-index:1}
+.about-stat-num{
+  font-family:var(--serif);font-weight:500;
+  font-size:2.75rem;letter-spacing:-0.03em;
+  color:var(--ink);line-height:1;
+  font-variation-settings:'opsz' 144;
+}
+.about-stat-label{
+  font-family:var(--mono);font-size:0.65rem;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);text-align:right;max-width:140px;
+}
+
+/* ====== EXPERIENCE (horizontal scroll) ====== */
+.experience{
+  background:var(--bg-soft);
+  padding:8rem 0;
+  overflow:hidden;
+}
+.experience .section-header{padding:0 2.5rem}
+.exp-scroll{
+  display:flex;gap:2rem;padding:0 2.5rem;
+  overflow-x:auto;scroll-snap-type:x mandatory;
+  padding-bottom:3rem;
+  scrollbar-width:thin;scrollbar-color:var(--ink) transparent;
+}
+.exp-scroll::-webkit-scrollbar{height:4px}
+.exp-scroll::-webkit-scrollbar-track{background:transparent}
+.exp-scroll::-webkit-scrollbar-thumb{background:var(--ink);border-radius:2px}
+
+.exp-card{
+  flex:0 0 min(440px,80vw);
+  background:var(--paper);
+  padding:3rem;
+  border:1px solid var(--ink);
+  scroll-snap-align:start;
+  position:relative;overflow:hidden;
+  transition:transform 0.5s var(--ease);
+  display:flex;flex-direction:column;
+  min-height:500px;
+}
+.exp-card:hover{transform:translateY(-8px)}
+.exp-card::before{
+  content:'';position:absolute;top:0;left:0;
+  width:0;height:4px;background:var(--accent);
+  transition:width 0.6s var(--ease);
+}
+.exp-card:hover::before{width:100%}
+.exp-card-num{
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.2em;color:var(--muted);margin-bottom:2rem;
+  display:flex;justify-content:space-between;
+}
+.exp-card-num .status{
+  color:var(--accent);display:flex;align-items:center;gap:0.4rem;
+}
+.exp-card-num .status::before{
+  content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;
+}
+.exp-card-title{
+  font-family:var(--serif);font-weight:500;
+  font-size:2rem;line-height:1.05;
+  letter-spacing:-0.02em;margin-bottom:0.5rem;
+  font-variation-settings:'opsz' 144;
+}
+.exp-card-role{
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1.5rem;
+  font-weight:500;
+}
+.exp-card-desc{
+  color:var(--ink-soft);font-size:0.95rem;line-height:1.7;
+  margin-bottom:2rem;flex-grow:1;
+}
+.exp-card-tags{
+  display:flex;flex-wrap:wrap;gap:0.5rem;
+  padding-top:1.5rem;border-top:1px solid var(--ink);
+}
+.exp-tag{
+  padding:0.4rem 0.9rem;
+  border:1px solid var(--ink);
+  font-family:var(--mono);font-size:0.6rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  transition:background 0.3s ease,color 0.3s ease;
+}
+.exp-tag:hover{background:var(--ink);color:var(--paper)}
+
+.exp-scroll-hint{
+  padding:0 2.5rem;display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:0.65rem;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);
+}
+.exp-scroll-hint span:last-child{color:var(--accent)}
+
+/* ====== EDUCATION ====== */
+.education{background:var(--bg);padding:8rem 2.5rem}
+.edu-feature{
+  display:grid;grid-template-columns:1fr 1fr;gap:6rem;
+  align-items:center;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  padding:4rem 0;
+}
+.edu-logo-wrap{
+  position:relative;padding:3rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.edu-logo-wrap::before,
+.edu-logo-wrap::after{
+  content:'';position:absolute;
+  border:1px solid var(--ink);
+  pointer-events:none;
+}
+.edu-logo-wrap::before{
+  top:0;left:0;width:40px;height:40px;
+  border-right:none;border-bottom:none;
+}
+.edu-logo-wrap::after{
+  bottom:0;right:0;width:40px;height:40px;
+  border-left:none;border-top:none;
+}
+.edu-logo{
+  max-width:380px;width:100%;
+  transition:transform 0.5s var(--ease);
+}
+.edu-logo-wrap:hover .edu-logo{transform:scale(1.04)}
+
+.edu-info-inner{max-width:500px}
+.edu-label{
+  font-family:var(--mono);font-size:0.65rem;
+  letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1rem;
+}
+.edu-title{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(2.25rem,4vw,3.25rem);
+  line-height:1;letter-spacing:-0.02em;
+  margin-bottom:0.75rem;
+  font-variation-settings:'opsz' 144;
+}
+.edu-degree{
+  font-family:var(--serif);font-style:italic;font-weight:300;
+  font-size:1.35rem;color:var(--accent);margin-bottom:1.75rem;
+}
+.edu-prose{
+  color:var(--ink-soft);font-size:1rem;line-height:1.7;
+  margin-bottom:2.5rem;
+}
+.edu-meta{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;
+  padding-top:1.75rem;border-top:1px solid var(--ink);
+}
+.edu-meta-label{
+  font-family:var(--mono);font-size:0.6rem;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:0.35rem;
+}
+.edu-meta-val{
+  font-family:var(--serif);font-size:1rem;font-weight:500;
+  letter-spacing:-0.01em;
+}
+
+/* ====== CONTACT ====== */
+.contact{
+  background:var(--ink);color:var(--paper);
+  padding:8rem 2.5rem 4rem;
+  position:relative;overflow:hidden;
+}
+.contact::before{
+  content:'';position:absolute;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,61,31,0.35) 0%,transparent 70%);
+  top:-200px;right:-200px;
+  filter:blur(80px);
+  animation:glow-float 10s ease-in-out infinite;
+}
+@keyframes glow-float{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(-50px,30px) scale(1.1)}
+}
+
+.contact-inner{position:relative;z-index:1}
+.contact .section-kicker{
+  color:var(--accent);border-color:var(--paper);
+}
+.contact-headline{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(3rem,8vw,8rem);
+  line-height:0.9;letter-spacing:-0.035em;
+  margin-bottom:3rem;max-width:14ch;
+  font-variation-settings:'opsz' 144;
+}
+.contact-headline em{
+  font-style:italic;font-weight:300;color:var(--accent);
+}
+.contact-lead{
+  font-size:1.2rem;color:rgba(250,246,236,0.7);
+  max-width:520px;line-height:1.6;
+  margin-bottom:5rem;
+}
+
+.contact-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  border-top:1px solid rgba(250,246,236,0.15);
+}
+.contact-link{
+  display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;gap:2rem;
+  padding:2.5rem 0;
+  border-bottom:1px solid rgba(250,246,236,0.15);
+  position:relative;overflow:hidden;
+  transition:padding 0.4s var(--ease);
+}
+.contact-link:nth-child(odd){border-right:1px solid rgba(250,246,236,0.15);padding-right:2.5rem}
+.contact-link:nth-child(even){padding-left:2.5rem}
+.contact-link:hover{padding-left:3rem;padding-right:3rem}
+.contact-link:nth-child(even):hover{padding-left:4rem}
+.contact-link-num{
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.15em;color:var(--accent);
+}
+.contact-link-content{display:flex;flex-direction:column;gap:0.25rem}
+.contact-link-label{
+  font-family:var(--mono);font-size:0.65rem;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(250,246,236,0.5);
+}
+.contact-link-value{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(1.5rem,2.5vw,2.25rem);
+  letter-spacing:-0.02em;
+  transition:color 0.3s ease;
+  font-variation-settings:'opsz' 72;
+}
+.contact-link:hover .contact-link-value{color:var(--accent)}
+.contact-link-arrow{
+  width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(250,246,236,0.25);
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.4s var(--ease),border-color 0.4s var(--ease),transform 0.4s var(--ease);
+  flex-shrink:0;
+}
+.contact-link:hover .contact-link-arrow{
+  background:var(--accent);border-color:var(--accent);
+  transform:rotate(-45deg);
+}
+.contact-link-arrow svg{width:14px;height:14px;transition:transform 0.4s var(--ease)}
+
+/* ====== FOOTER ====== */
+footer{
+  background:var(--ink);color:var(--paper);
+  padding:3rem 2.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid rgba(250,246,236,0.15);
+  flex-wrap:wrap;gap:1.5rem;
+  font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.12em;
+  color:rgba(250,246,236,0.5);
+}
+footer a{transition:color 0.3s ease}
+footer a:hover{color:var(--accent)}
+.footer-meta{display:flex;gap:2rem;flex-wrap:wrap}
+
+/* ====== RESPONSIVE ====== */
 @media(max-width:1024px){
-  section{padding:6rem 6vw}
-  .about-grid{grid-template-columns:1fr;gap:3rem}
-  .exp-item{grid-template-columns:1fr;gap:1rem}
-  .edu-card{grid-template-columns:1fr}
-  .edu-visual{padding:3rem}
-  .edu-info{padding:3rem}
-  .hero-portrait{
-    position:relative;right:auto;top:auto;transform:none;
-    margin:3rem auto 0;
+  nav{padding:1.25rem 1.5rem}
+  section{padding:5rem 1.5rem}
+  .hero{
+    grid-template-columns:1fr;padding:7rem 1.5rem 2rem;
+    min-height:auto;gap:2rem;
   }
-  .hero-portrait-frame{width:260px;height:330px;margin:0 auto}
-  .hero{text-align:center}
-  .hero-overline{justify-content:center}
-  .hero-desc{margin-left:auto;margin-right:auto}
-  .hero-cta-group{justify-content:center}
+  .hero-meta{left:1.5rem;right:1.5rem;top:6rem}
+  .hero-scroll-hint{left:1.5rem}
+  .hero-portrait{max-width:340px;justify-self:center}
+  .hero-portrait-tag{display:none}
+  .about-body{grid-template-columns:1fr;gap:3rem}
+  .edu-feature{grid-template-columns:1fr;gap:3rem}
+  .section-header{grid-template-columns:1fr;gap:1.5rem}
+  .contact-grid{grid-template-columns:1fr}
+  .contact-link:nth-child(odd){border-right:none;padding-right:0}
+  .contact-link:nth-child(even){padding-left:0}
+  .contact-link:hover{padding-left:1rem;padding-right:1rem}
+  .contact-link:nth-child(even):hover{padding-left:1rem}
+  .experience .section-header{padding:0 1.5rem}
+  .exp-scroll{padding:0 1.5rem}
+  .exp-scroll-hint{padding:0 1.5rem}
 }
-@media(max-width:768px){
-  nav{padding:1rem 1.5rem}
-  nav.scrolled{padding:0.75rem 1.5rem}
-  .nav-links{gap:1.5rem}
-  .nav-links a{font-size:0.65rem}
-  section{padding:5rem 5vw}
-  .hero{padding:0 5vw}
-  .about-stats{grid-template-columns:1fr}
-  .contact-links{flex-direction:column;align-items:center}
-  .hero-cta-group{flex-direction:column;align-items:flex-start}
-  footer{flex-direction:column;gap:1rem;text-align:center}
-  .edu-meta{flex-direction:column;gap:1rem}
-}
-@media(max-width:480px){
+@media(max-width:640px){
   .nav-links{display:none}
-  .contact{padding:6rem 5vw}
+  .edu-meta{grid-template-columns:1fr;gap:1rem}
+  .hero-portrait-badge{width:90px;height:90px;font-size:0.55rem;bottom:-1rem;right:-1rem}
+  .btn{padding:1rem 1.5rem}
+  footer{flex-direction:column;text-align:center}
 }
 </style>
 </head>
 <body>
 
-<div class="scroll-progress" id="scrollProgress"></div>
+<div class="cursor"></div>
+<div class="cursor-ring"></div>
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
 
-<!-- Navigation -->
-<nav id="nav">
-  <a href="#" class="nav-logo">J<span>.</span>R</a>
+<nav>
+  <a href="#" class="nav-mark" data-hover>
+    <span class="nav-mark-dot"></span>
+    Jonathan<em>.</em>
+  </a>
   <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#education">Education</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#about" data-num="01" data-hover>About</a></li>
+    <li><a href="#experience" data-num="02" data-hover>Work</a></li>
+    <li><a href="#education" data-num="03" data-hover>Education</a></li>
+    <li><a href="#contact" data-num="04" data-hover>Contact</a></li>
   </ul>
+  <div class="nav-time">
+    <span class="nav-time-dot"></span>
+    <span id="navClock">Available</span>
+  </div>
 </nav>
 
-<!-- Hero -->
-<section class="hero" id="hero">
-  <div class="hero-bg">
-    <div class="hero-grid"></div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-meta">
+    <span>◆ Boston, MA</span>
+    <span>Portfolio / 2026</span>
   </div>
-  <div class="hero-content">
-    <div class="hero-overline">COO &amp; Co-Founder</div>
-    <h1 class="hero-name">
-      <span class="line"><span class="line-inner">Jonathan</span></span>
-      <span class="line"><span class="line-inner">Ran<span class="accent">.</span></span></span>
+  <div class="hero-text">
+    <div class="hero-eyebrow fade-in">COO &amp; Co-Founder — Neobotics Foundation</div>
+    <h1 class="hero-h1 word-reveal" id="heroH1">
+      <span class="word"><span class="word-inner">Operator.</span></span>
+      <br>
+      <span class="word"><span class="word-inner"><span class="italic">Builder</span></span></span>
+      <span class="word"><span class="word-inner"><span class="amp">&amp;</span></span></span>
+      <br>
+      <span class="word"><span class="word-inner">advocate.</span></span>
     </h1>
-    <p class="hero-desc">Building the future of robotics education through nonprofit innovation, operational strategy, and community impact.</p>
-    <div class="hero-cta-group">
-      <a href="#contact" class="hero-cta">
-        <span>Get in Touch</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <p class="hero-desc fade-up">Jonathan Ran is the <strong>Chief Operating Officer</strong> of Neobotics Foundation — a 501(c)(3) nonprofit expanding access to robotics education for students who need it most.</p>
+    <div class="hero-ctas fade-up">
+      <a href="#contact" class="btn btn-primary" data-hover>
+        <span>Start a Conversation</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="#about" class="hero-cta-secondary">Learn More</a>
+      <a href="#about" class="btn btn-ghost" data-hover>
+        <span>About Jonathan</span>
+      </a>
     </div>
   </div>
-  <div class="hero-portrait">
-    <div class="hero-portrait-frame">
+  <div class="hero-portrait scale-in">
+    <span class="hero-portrait-tag">EST. 2003 — Boston, MA</span>
+    <div class="hero-portrait-wrap" data-hover>
       <img src="headshot.jpg" alt="Jonathan Ran" class="hero-portrait-img">
-      <div class="hero-portrait-accent"></div>
-      <div class="hero-portrait-label">Jonathan Ran — 2026</div>
+    </div>
+    <div class="hero-portrait-badge">
+      <span class="hero-portrait-badge-inner">Mission-First · Operations · Strategy ·&nbsp;</span>
     </div>
   </div>
-  <div class="hero-scroll">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
+  <div class="hero-scroll-hint">Scroll to explore</div>
 </section>
 
-<!-- About -->
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <div class="marquee-item">Operations</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item italic">Strategy</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item">Partnerships</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item italic">Nonprofit</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item">Robotics</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item italic">Education</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+
+    <div class="marquee-item">Operations</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item italic">Strategy</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item">Partnerships</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item italic">Nonprofit</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item">Robotics</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+    <div class="marquee-item italic">Education</div>
+    <svg class="marquee-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l3 9h9l-7.5 5.5 3 9L12 18l-7.5 5.5 3-9L0 9h9z"/></svg>
+  </div>
+</div>
+
+<!-- ABOUT -->
 <section class="about" id="about">
-  <div class="reveal">
-    <div class="section-label"><span class="num">01</span> About</div>
+  <div class="section-header">
+    <div class="section-kicker fade-in">01 — About</div>
+    <h2 class="section-h2 fade-up">An <em>operator</em> who believes mission and <span class="underline">execution</span> aren't opposites.</h2>
   </div>
-  <div class="reveal">
-    <h2 class="section-heading">Driven by <em>purpose</em>,<br>guided by strategy.</h2>
-  </div>
-  <div class="about-grid">
-    <div class="about-text">
-      <p class="reveal">Jonathan Ran is the <strong>Chief Operating Officer and Co-Founder</strong> of Neobotics Foundation Inc., a 501(c)(3) nonprofit organization dedicated to making robotics education accessible to underserved communities.</p>
-      <p class="reveal">With a foundation in the liberal arts and a sharp operational mind, Jonathan bridges the gap between mission-driven work and scalable execution — overseeing partnerships, social media strategy, and the day-to-day operations that keep Neobotics running.</p>
-      <div class="about-highlight reveal">
-        <p>"Technology education isn't a privilege — it's a right. Every student deserves access to the tools that will shape their future."</p>
+  <div class="about-body">
+    <div class="about-col">
+      <p class="about-lead fade-up">Building the infrastructure for a <em>more equitable</em> future in STEM — one partnership, one program, one student at a time.</p>
+    </div>
+    <div class="about-col">
+      <div class="about-body-text fade-up">
+        <p>Jonathan leads operations at <strong>Neobotics Foundation Inc.</strong>, a 501(c)(3) nonprofit working to bring robotics education to communities that have been historically left behind.</p>
+        <p>With a liberal arts foundation from Boston University and a sharp operational mind, he bridges mission-driven work with scalable execution — partnerships, strategy, and the thousand small decisions that keep an organization running.</p>
       </div>
     </div>
-    <div class="about-stats stagger-children">
-      <div class="stat-card reveal">
-        <div class="stat-number">501(c)(3)</div>
-        <div class="stat-label">Tax-Exempt Nonprofit</div>
-        <div class="stat-desc">Recognized by the IRS for educational mission</div>
-      </div>
-      <div class="stat-card reveal">
-        <div class="stat-number">BU</div>
-        <div class="stat-label">Boston University</div>
-        <div class="stat-desc">College of Arts &amp; Sciences alumnus</div>
-      </div>
-      <div class="stat-card reveal">
-        <div class="stat-number">COO</div>
-        <div class="stat-label">Chief Operating Officer</div>
-        <div class="stat-desc">Strategy, partnerships, and execution</div>
-      </div>
-      <div class="stat-card reveal">
-        <div class="stat-number">∞</div>
-        <div class="stat-label">Impact-First</div>
-        <div class="stat-desc">Mission-driven approach to everything</div>
+    <div class="about-col">
+      <div class="about-stats fade-up">
+        <div class="about-stat" data-hover>
+          <span class="about-stat-num" data-count="501">501(c)(3)</span>
+          <span class="about-stat-label">IRS-Recognized Nonprofit</span>
+        </div>
+        <div class="about-stat" data-hover>
+          <span class="about-stat-num">BU</span>
+          <span class="about-stat-label">Boston University, CAS</span>
+        </div>
+        <div class="about-stat" data-hover>
+          <span class="about-stat-num">COO</span>
+          <span class="about-stat-label">Chief Operating Officer</span>
+        </div>
+        <div class="about-stat" data-hover>
+          <span class="about-stat-num">∞</span>
+          <span class="about-stat-label">Mission-First Approach</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Experience -->
+<!-- EXPERIENCE -->
 <section class="experience" id="experience">
-  <div class="reveal">
-    <div class="section-label"><span class="num">02</span> Experience</div>
+  <div class="section-header">
+    <div class="section-kicker fade-in">02 — Work</div>
+    <h2 class="section-h2 fade-up">Where <em>mission</em> meets execution.</h2>
   </div>
-  <div class="reveal">
-    <h2 class="section-heading">Where mission<br>meets <em>execution</em>.</h2>
+  <div class="exp-scroll-hint" style="margin-bottom:2rem">
+    <span>← Drag or scroll horizontally</span>
+    <span>03 projects</span>
   </div>
-  <div class="exp-container">
-    <div class="exp-item reveal">
-      <div class="exp-date">
-        <span class="year">Now</span>
-        Co-Founder
+  <div class="exp-scroll" id="expScroll">
+    <article class="exp-card fade-up" data-hover>
+      <div class="exp-card-num">
+        <span>/ 01</span>
+        <span class="status">Ongoing</span>
       </div>
-      <div class="exp-content">
-        <h3>Neobotics Foundation Inc.</h3>
-        <div class="role">Chief Operating Officer</div>
-        <p>Leading operations for a 501(c)(3) nonprofit that brings robotics and STEM education to underserved communities. Responsible for organizational strategy, partnership development, social media presence, and building scalable programs that create lasting impact.</p>
-        <div class="exp-tags">
-          <span class="exp-tag">Operations</span>
-          <span class="exp-tag">Strategy</span>
-          <span class="exp-tag">Partnerships</span>
-          <span class="exp-tag">Social Media</span>
-          <span class="exp-tag">Nonprofit</span>
-        </div>
+      <h3 class="exp-card-title">Neobotics Foundation</h3>
+      <div class="exp-card-role">Chief Operating Officer</div>
+      <p class="exp-card-desc">Leading operations for a 501(c)(3) nonprofit bringing robotics and STEM education to underserved communities. Responsible for organizational strategy, partnership development, and building programs that create lasting impact.</p>
+      <div class="exp-card-tags">
+        <span class="exp-tag">Operations</span>
+        <span class="exp-tag">Strategy</span>
+        <span class="exp-tag">Nonprofit</span>
+        <span class="exp-tag">Leadership</span>
       </div>
-    </div>
-    <div class="exp-item reveal">
-      <div class="exp-date">
-        <span class="year">Focus</span>
-        Ongoing
+    </article>
+    <article class="exp-card fade-up" data-hover>
+      <div class="exp-card-num">
+        <span>/ 02</span>
+        <span class="status">Ongoing</span>
       </div>
-      <div class="exp-content">
-        <h3>Community Outreach &amp; Partnerships</h3>
-        <div class="role">Strategic Development</div>
-        <p>Cultivating relationships with educational institutions, community organizations, and corporate sponsors to expand Neobotics' reach. Developing content strategies that amplify the organization's mission and engage diverse audiences.</p>
-        <div class="exp-tags">
-          <span class="exp-tag">Outreach</span>
-          <span class="exp-tag">Content</span>
-          <span class="exp-tag">Community</span>
-          <span class="exp-tag">Growth</span>
-        </div>
+      <h3 class="exp-card-title">Partnerships &amp; Outreach</h3>
+      <div class="exp-card-role">Strategic Development</div>
+      <p class="exp-card-desc">Cultivating relationships with schools, community organizations, and corporate sponsors to expand Neobotics' reach. Designing content strategies that amplify the organization's mission and engage diverse audiences.</p>
+      <div class="exp-card-tags">
+        <span class="exp-tag">Partnerships</span>
+        <span class="exp-tag">Outreach</span>
+        <span class="exp-tag">Content</span>
+        <span class="exp-tag">Growth</span>
       </div>
-    </div>
-    <div class="exp-item reveal">
-      <div class="exp-date">
-        <span class="year">Build</span>
-        Tools & Tech
+    </article>
+    <article class="exp-card fade-up" data-hover>
+      <div class="exp-card-num">
+        <span>/ 03</span>
+        <span class="status">Ongoing</span>
       </div>
-      <div class="exp-content">
-        <h3>Internal Tooling &amp; Digital Strategy</h3>
-        <div class="role">Technical Operations</div>
-        <p>Designing and building internal tools — from social media post generators to interactive platforms — that streamline operations and enhance Neobotics' digital presence. Bridging the gap between technical capability and organizational need.</p>
-        <div class="exp-tags">
-          <span class="exp-tag">Web Dev</span>
-          <span class="exp-tag">Tooling</span>
-          <span class="exp-tag">Automation</span>
-          <span class="exp-tag">Digital</span>
-        </div>
+      <h3 class="exp-card-title">Digital &amp; Tooling</h3>
+      <div class="exp-card-role">Technical Operations</div>
+      <p class="exp-card-desc">Designing and building internal tools — from social media post generators to interactive platforms — that streamline operations and enhance Neobotics' digital presence. Bridging the gap between technical capability and organizational need.</p>
+      <div class="exp-card-tags">
+        <span class="exp-tag">Web Dev</span>
+        <span class="exp-tag">Tooling</span>
+        <span class="exp-tag">Automation</span>
+        <span class="exp-tag">Digital</span>
       </div>
-    </div>
+    </article>
   </div>
 </section>
 
-<!-- Education -->
+<!-- EDUCATION -->
 <section class="education" id="education">
-  <div class="reveal">
-    <div class="section-label"><span class="num">03</span> Education</div>
+  <div class="section-header">
+    <div class="section-kicker fade-in">03 — Education</div>
+    <h2 class="section-h2 fade-up">The <em>foundation</em> of perspective.</h2>
   </div>
-  <div class="reveal">
-    <h2 class="section-heading">The <em>foundation</em><br>of perspective.</h2>
-  </div>
-  <div class="edu-card reveal-scale">
-    <div class="edu-visual">
+  <div class="edu-feature">
+    <div class="edu-logo-wrap scale-in" data-hover>
       <img src="bu-logo.webp" alt="Boston University" class="edu-logo">
     </div>
-    <div class="edu-info">
-      <h3>Boston University</h3>
-      <div class="degree">College of Arts &amp; Sciences</div>
-      <p>A liberal arts education that cultivated critical thinking, interdisciplinary problem-solving, and a deep appreciation for the intersection of technology and humanistic values — the lens through which Jonathan approaches every operational challenge.</p>
-      <div class="edu-meta">
-        <div class="edu-meta-item">
-          <div class="label">Institution</div>
-          <div class="value">Boston University</div>
-        </div>
-        <div class="edu-meta-item">
-          <div class="label">College</div>
-          <div class="value">Arts &amp; Sciences</div>
-        </div>
-        <div class="edu-meta-item">
-          <div class="label">Location</div>
-          <div class="value">Boston, MA</div>
+    <div class="edu-info fade-up">
+      <div class="edu-info-inner">
+        <div class="edu-label">Alma Mater</div>
+        <h3 class="edu-title">Boston University</h3>
+        <div class="edu-degree">College of Arts &amp; Sciences</div>
+        <p class="edu-prose">A liberal arts education that cultivated interdisciplinary problem-solving, critical analysis, and a deep appreciation for the intersection of technology and humanistic values — the lens Jonathan brings to every operational challenge.</p>
+        <div class="edu-meta">
+          <div>
+            <div class="edu-meta-label">Institution</div>
+            <div class="edu-meta-val">Boston University</div>
+          </div>
+          <div>
+            <div class="edu-meta-label">College</div>
+            <div class="edu-meta-val">Arts &amp; Sciences</div>
+          </div>
+          <div>
+            <div class="edu-meta-label">Location</div>
+            <div class="edu-meta-val">Boston, MA</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Contact -->
+<!-- CONTACT -->
 <section class="contact" id="contact">
-  <div class="reveal">
-    <div class="section-label"><span class="num">04</span> Contact</div>
-  </div>
-  <div class="reveal">
-    <h2 class="section-heading">Let's build<br>something <em>meaningful</em>.</h2>
-  </div>
-  <p class="contact-sub reveal">Whether you're interested in partnering with Neobotics, discussing strategy, or exploring new ideas — I'd love to connect.</p>
-  <div class="contact-links stagger-children">
-    <a href="mailto:jmr@neobotics.org" class="contact-card reveal">
-      <span class="contact-card-label">Organization</span>
-      <span class="contact-card-value">jmr@neobotics.org</span>
-    </a>
-    <a href="mailto:jonathanran2003@gmail.com" class="contact-card reveal">
-      <span class="contact-card-label">Personal</span>
-      <span class="contact-card-value">jonathanran2003@gmail.com</span>
-    </a>
+  <div class="contact-inner">
+    <div class="section-header">
+      <div class="section-kicker fade-in">04 — Contact</div>
+      <h2 class="contact-headline fade-up">Let's build something <em>meaningful</em>.</h2>
+    </div>
+    <p class="contact-lead fade-up">Whether you're interested in partnering with Neobotics, sharing ideas, or just saying hello — the best ways to reach me.</p>
+    <div class="contact-grid">
+      <a href="tel:+16106061536" class="contact-link fade-up" data-hover>
+        <span class="contact-link-num">/ 01</span>
+        <span class="contact-link-content">
+          <span class="contact-link-label">Call or Text</span>
+          <span class="contact-link-value">(610) 606-1536</span>
+        </span>
+        <span class="contact-link-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+      <a href="mailto:jmr@neobotics.org" class="contact-link fade-up" data-hover>
+        <span class="contact-link-num">/ 02</span>
+        <span class="contact-link-content">
+          <span class="contact-link-label">Organization</span>
+          <span class="contact-link-value">jmr@neobotics.org</span>
+        </span>
+        <span class="contact-link-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+    </div>
   </div>
 </section>
 
-<!-- Footer -->
 <footer>
-  <p>&copy; 2026 Jonathan Ran. All rights reserved.</p>
-  <a href="#hero" class="footer-back">Back to top &uarr;</a>
+  <span>© 2026 Jonathan Ran — Built with intention.</span>
+  <div class="footer-meta">
+    <span>Boston, MA</span>
+    <a href="#" data-hover>Back to top ↑</a>
+  </div>
 </footer>
 
 <script>
 (() => {
-  // Scroll progress bar
-  const progressBar = document.getElementById('scrollProgress');
+  const $ = (s,c=document) => c.querySelector(s);
+  const $$ = (s,c=document) => [...c.querySelectorAll(s)];
+
+  // ===== Custom cursor =====
+  const cursor = $('.cursor');
+  const ring = $('.cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  window.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+  });
+  const animRing = () => {
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
+    requestAnimationFrame(animRing);
+  };
+  animRing();
+
+  // Cursor hover states
+  $$('[data-hover]').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+  $$('input, textarea, p, h1, h2, h3, .hero-desc, .about-lead').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('text-hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('text-hovering'));
+  });
+
+  // ===== Progress bar =====
+  const progressBar = $('#progressBar');
   const updateProgress = () => {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = docHeight > 0 ? scrollTop / docHeight : 0;
-    progressBar.style.transform = `scaleX(${progress})`;
+    const st = window.scrollY;
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.transform = `scaleX(${h > 0 ? st / h : 0})`;
   };
 
-  // Nav scroll state
-  const nav = document.getElementById('nav');
-  const updateNav = () => {
-    nav.classList.toggle('scrolled', window.scrollY > 80);
+  // ===== Nav clock / availability =====
+  const clock = $('#navClock');
+  const updateClock = () => {
+    const now = new Date();
+    const hr = now.getHours();
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const mode = hr >= 9 && hr < 22 ? 'Available' : 'Offline';
+    const h12 = hr % 12 || 12;
+    clock.textContent = `${mode} — ${h12}:${m}`;
   };
+  updateClock();
+  setInterval(updateClock, 30000);
 
-  // Intersection Observer for reveals
-  const observerOptions = {
-    threshold: 0.15,
-    rootMargin: '0px 0px -60px 0px'
-  };
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
+  // ===== Intersection Observer =====
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
       }
     });
-  }, observerOptions);
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
 
-  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
-    observer.observe(el);
-  });
+  $$('.fade-up, .fade-in, .scale-in, .split-line').forEach(el => io.observe(el));
 
-  // Parallax on mouse move (hero only)
-  const hero = document.getElementById('hero');
-  const heroGrid = document.querySelector('.hero-grid');
-  hero.addEventListener('mousemove', (e) => {
-    const rect = hero.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    if (heroGrid) {
-      heroGrid.style.transform = `translate(${x * 15}px, ${y * 15}px)`;
-    }
-  });
-
-  // Smooth parallax on scroll for certain elements
-  let ticking = false;
-  const onScroll = () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        updateProgress();
-        updateNav();
-        ticking = false;
+  // Word reveals with stagger
+  $$('.word-reveal').forEach(parent => {
+    const words = $$('.word-inner', parent);
+    const wordIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          parent.classList.add('in');
+          words.forEach((w, i) => {
+            w.style.transitionDelay = `${i * 0.12}s`;
+          });
+          wordIO.unobserve(parent);
+        }
       });
-      ticking = true;
+    }, { threshold: 0.3 });
+    wordIO.observe(parent);
+  });
+
+  // Trigger hero reveals immediately
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelector('.hero-h1').classList.add('in');
+      $$('.hero .fade-in, .hero .fade-up, .hero .scale-in').forEach((el, i) => {
+        setTimeout(() => el.classList.add('in'), 200 + i * 120);
+      });
+    }, 100);
+  });
+
+  // ===== Scroll handling =====
+  let raf;
+  window.addEventListener('scroll', () => {
+    if (!raf) {
+      raf = requestAnimationFrame(() => {
+        updateProgress();
+        raf = null;
+      });
     }
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-
-  // Initial calls
+  }, { passive: true });
   updateProgress();
-  updateNav();
 
-  // Smooth scroll for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', (e) => {
-      e.preventDefault();
-      const target = document.querySelector(anchor.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // ===== Smooth anchor scroll =====
+  $$('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (href.length > 1) {
+        e.preventDefault();
+        const target = $(href);
+        if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+      } else {
+        e.preventDefault();
+        window.scrollTo({ top:0, behavior:'smooth' });
       }
     });
   });
 
-  // Counter animation for stat numbers (intersection-triggered)
-  const statCards = document.querySelectorAll('.stat-card');
-  const statObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('counted');
-        statObserver.unobserve(entry.target);
-      }
+  // ===== Horizontal scroll via vertical wheel on experience =====
+  const expScroll = $('#expScroll');
+  if (expScroll) {
+    // Drag to scroll
+    let isDown=false, startX=0, scrollL=0;
+    expScroll.addEventListener('mousedown', e => {
+      isDown=true;
+      startX = e.pageX - expScroll.offsetLeft;
+      scrollL = expScroll.scrollLeft;
+      expScroll.style.cursor='grabbing';
     });
-  }, { threshold: 0.5 });
-  statCards.forEach(card => statObserver.observe(card));
+    window.addEventListener('mouseup', () => { isDown=false; expScroll.style.cursor='' });
+    window.addEventListener('mousemove', e => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - expScroll.offsetLeft;
+      expScroll.scrollLeft = scrollL - (x - startX) * 1.5;
+    });
+  }
+
+  // ===== Magnetic buttons =====
+  $$('.btn').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const x = e.clientX - r.left - r.width/2;
+      const y = e.clientY - r.top - r.height/2;
+      btn.style.transform = `translate(${x*0.2}px, ${y*0.3}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform='';
+    });
+  });
+
+  // ===== Parallax portrait =====
+  const portrait = $('.hero-portrait-wrap');
+  if (portrait) {
+    const heroSection = $('.hero');
+    heroSection.addEventListener('mousemove', e => {
+      const r = heroSection.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width - 0.5) * 12;
+      const y = ((e.clientY - r.top) / r.height - 0.5) * 12;
+      portrait.style.transform = `translate(${x}px, ${y}px)`;
+    });
+    heroSection.addEventListener('mouseleave', () => {
+      portrait.style.transform = '';
+    });
+  }
 })();
 </script>
 </body>
