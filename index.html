@@ -670,8 +670,8 @@ footer a:hover{color:var(--accent)}
   .hero-portrait{max-width:340px;justify-self:center}
   .hero-portrait-tag{display:none}
   .about-body{grid-template-columns:1fr;gap:3rem}
-  .edu-feature{grid-template-columns:1fr;gap:3rem}
-  .section-header{grid-template-columns:1fr;gap:1.5rem}
+  .edu-feature{grid-template-columns:1fr;gap:3rem;padding:3rem 0}
+  .section-header{grid-template-columns:1fr;gap:1.5rem;margin-bottom:4rem}
   .contact-grid{grid-template-columns:1fr}
   .contact-link:nth-child(odd){border-right:none;padding-right:0}
   .contact-link:nth-child(even){padding-left:0}
@@ -681,12 +681,96 @@ footer a:hover{color:var(--accent)}
   .exp-scroll{padding:0 1.5rem}
   .exp-scroll-hint{padding:0 1.5rem}
 }
-@media(max-width:640px){
-  .nav-links{display:none}
-  .edu-meta{grid-template-columns:1fr;gap:1rem}
-  .hero-portrait-badge{width:90px;height:90px;font-size:0.55rem;bottom:-1rem;right:-1rem}
-  .btn{padding:1rem 1.5rem}
-  footer{flex-direction:column;text-align:center}
+@media(max-width:768px){
+  nav{padding:1rem 1.25rem}
+  .nav-links{gap:1.25rem;font-size:0.65rem}
+  .nav-links a::before{display:none}
+  section{padding:4.5rem 1.25rem}
+  .hero{padding:6.5rem 1.25rem 2rem;gap:1.75rem}
+  .hero-meta{left:1.25rem;right:1.25rem;top:5.5rem;font-size:0.6rem}
+  .hero-scroll-hint{left:1.25rem;bottom:1.25rem;font-size:0.6rem}
+  .hero-h1{font-size:clamp(3rem,13vw,5.5rem);margin-bottom:1.5rem}
+  .hero-desc{font-size:1rem;margin-bottom:2rem}
+  .hero-eyebrow{font-size:0.6rem;padding:0.45rem 0.85rem;margin-bottom:1.5rem}
+  .hero-ctas{gap:0.75rem;width:100%}
+  .btn{padding:1rem 1.5rem;min-height:44px}
+  .hero-portrait{max-width:280px}
+  .hero-portrait-badge{width:88px;height:88px;font-size:0.5rem;bottom:-1rem;right:-1rem;padding:0.6rem}
+  .marquee{padding:1.5rem 0}
+  .marquee-track{gap:2rem;font-size:clamp(2.25rem,9vw,3.5rem)}
+  .marquee-item{gap:2rem}
+  .marquee-star{width:24px;height:24px}
+  .about-stat-num{font-size:2rem}
+  .about-stat{padding:1.25rem 0}
+  .about-lead{font-size:clamp(1.25rem,4.5vw,1.5rem)}
+  .exp-card{flex:0 0 86vw;padding:2rem;min-height:auto}
+  .exp-card-title{font-size:1.65rem}
+  .edu-feature{gap:2rem;padding:2.5rem 0}
+  .edu-logo-wrap{padding:2rem}
+  .edu-logo{max-width:260px}
+  .edu-title{font-size:clamp(2rem,7vw,2.75rem)}
+  .edu-degree{font-size:1.15rem}
+  .edu-meta{grid-template-columns:1fr 1fr;gap:1rem}
+  .contact{padding:5rem 1.25rem 3rem}
+  .contact-headline{font-size:clamp(2.5rem,11vw,4.5rem);margin-bottom:2rem}
+  .contact-lead{font-size:1rem;margin-bottom:3rem}
+  .contact-link{
+    grid-template-columns:auto 1fr auto;gap:1rem;
+    padding:1.75rem 0;min-height:44px;
+  }
+  .contact-link-value{font-size:clamp(1.15rem,5vw,1.5rem)}
+  .contact-link-arrow{width:36px;height:36px}
+  footer{padding:2rem 1.25rem;font-size:0.6rem}
+  .section-h2{font-size:clamp(2rem,7.5vw,3rem)}
+}
+@media(max-width:480px){
+  nav{padding:0.85rem 1rem}
+  .nav-links{gap:0.85rem;font-size:0.6rem;letter-spacing:0.08em}
+  .nav-links a{padding:0.6rem 0}
+  section{padding:4rem 1rem}
+  .hero{padding:6rem 1rem 2rem}
+  .hero-meta{left:1rem;right:1rem;top:5rem;font-size:0.55rem;letter-spacing:0.1em}
+  .hero-scroll-hint{display:none}
+  .hero-h1{font-size:clamp(2.6rem,14vw,4rem);letter-spacing:-0.025em}
+  .hero-desc{font-size:0.95rem}
+  .hero-ctas{flex-direction:column;align-items:stretch}
+  .btn{width:100%;justify-content:center;padding:1.05rem 1.25rem}
+  .hero-portrait{max-width:240px}
+  .hero-portrait-wrap{clip-path:polygon(0 0,100% 0,100% 100%,10% 100%,0 90%)}
+  .hero-portrait-badge{width:72px;height:72px;font-size:0.42rem;bottom:-0.75rem;right:-0.75rem;padding:0.5rem;letter-spacing:0.1em}
+  .marquee-track{font-size:clamp(2rem,10vw,3rem);gap:1.5rem}
+  .marquee-item{gap:1.5rem}
+  .section-kicker{font-size:0.6rem;letter-spacing:0.15em}
+  .section-h2{font-size:clamp(1.85rem,9vw,2.5rem)}
+  .about-stat{flex-wrap:wrap;gap:0.5rem}
+  .about-stat-num{font-size:1.75rem}
+  .about-stat-label{font-size:0.55rem;max-width:none;text-align:left;width:100%}
+  .about-body-text{font-size:0.95rem;line-height:1.7}
+  .exp-card{flex:0 0 88vw;padding:1.75rem}
+  .exp-card-title{font-size:1.45rem}
+  .exp-card-desc{font-size:0.9rem}
+  .exp-tag{font-size:0.55rem;padding:0.35rem 0.75rem}
+  .edu-feature{gap:1.5rem;padding:2rem 0}
+  .edu-logo-wrap{padding:1.5rem}
+  .edu-logo-wrap::before,.edu-logo-wrap::after{width:24px;height:24px}
+  .edu-logo{max-width:200px}
+  .edu-title{font-size:clamp(1.75rem,8vw,2.25rem)}
+  .edu-degree{font-size:1rem;margin-bottom:1.25rem}
+  .edu-prose{font-size:0.95rem;margin-bottom:1.75rem}
+  .edu-meta{grid-template-columns:1fr;gap:0.75rem}
+  .contact{padding:4rem 1rem 2.5rem}
+  .contact::before{width:300px;height:300px;top:-100px;right:-100px}
+  .contact-headline{font-size:clamp(2.1rem,12vw,3.5rem);margin-bottom:1.5rem}
+  .contact-lead{font-size:0.95rem;margin-bottom:2rem}
+  .contact-link{gap:0.75rem;padding:1.5rem 0}
+  .contact-link-num{font-size:0.6rem}
+  .contact-link-label{font-size:0.55rem}
+  .contact-link-value{font-size:clamp(1.05rem,5.5vw,1.35rem)}
+  .contact-link-arrow{width:32px;height:32px}
+  .contact-link-arrow svg{width:11px;height:11px}
+  .contact-link:hover{padding-left:0.5rem;padding-right:0.5rem}
+  footer{padding:1.75rem 1rem;font-size:0.55rem;gap:1rem}
+  .footer-meta{gap:1rem;justify-content:center}
 }
 </style>
 </head>
