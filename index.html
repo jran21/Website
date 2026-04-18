@@ -642,6 +642,29 @@ section{padding:8rem 2.5rem;position:relative}
 }
 .contact-link-arrow svg{width:14px;height:14px;transition:transform 0.4s var(--ease)}
 
+/* copy-to-clipboard button resets + state swap */
+button.contact-link{
+  all:unset;display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;gap:2rem;
+  padding:2.5rem 0;
+  border-bottom:1px solid rgba(250,246,236,0.15);
+  position:relative;overflow:hidden;cursor:pointer;
+  color:var(--paper);
+  transition:padding 0.4s var(--ease);
+  font-family:inherit;width:100%;
+  text-align:left;
+}
+button.contact-link:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.copied-label{display:none;color:var(--accent)}
+.check-icon{display:none}
+button.contact-link.copied .copy-label{display:none}
+button.contact-link.copied .copied-label{display:inline}
+button.contact-link.copied .copy-icon{display:none}
+button.contact-link.copied .check-icon{display:block}
+button.contact-link.copied .contact-link-arrow{
+  background:var(--accent);border-color:var(--accent);transform:rotate(0);
+}
+
 /* ====== FOOTER ====== */
 footer{
   background:var(--ink);color:var(--paper);
@@ -673,10 +696,10 @@ footer a:hover{color:var(--accent)}
   .edu-feature{grid-template-columns:1fr;gap:3rem;padding:3rem 0}
   .section-header{grid-template-columns:1fr;gap:1.5rem;margin-bottom:4rem}
   .contact-grid{grid-template-columns:1fr}
-  .contact-link:nth-child(odd){border-right:none;padding-right:0}
-  .contact-link:nth-child(even){padding-left:0}
-  .contact-link:hover{padding-left:1rem;padding-right:1rem}
-  .contact-link:nth-child(even):hover{padding-left:1rem}
+  .contact-link:nth-child(odd),button.contact-link:nth-child(odd){border-right:none;padding-right:0}
+  .contact-link:nth-child(even),button.contact-link:nth-child(even){padding-left:0}
+  .contact-link:hover,button.contact-link:hover{padding-left:1rem;padding-right:1rem}
+  .contact-link:nth-child(even):hover,button.contact-link:nth-child(even):hover{padding-left:1rem}
   .experience .section-header{padding:0 1.5rem}
   .exp-scroll{padding:0 1.5rem}
   .exp-scroll-hint{padding:0 1.5rem}
@@ -906,12 +929,27 @@ footer a:hover{color:var(--accent)}
   </div>
   <div class="exp-scroll-hint" style="margin-bottom:2rem">
     <span>← Drag or scroll horizontally</span>
-    <span>03 projects</span>
+    <span>04 projects</span>
   </div>
   <div class="exp-scroll" id="expScroll">
     <article class="exp-card fade-up" data-hover>
       <div class="exp-card-num">
         <span>/ 01</span>
+        <span class="status">Current</span>
+      </div>
+      <h3 class="exp-card-title">Principal Financial Group</h3>
+      <div class="exp-card-role">Business Intelligence Analyst I</div>
+      <p class="exp-card-desc">Translating enterprise data into decisions at a Fortune 500 financial services firm. Building dashboards, surfacing trends, and partnering with stakeholders to turn raw reporting into actionable insight across the business.</p>
+      <div class="exp-card-tags">
+        <span class="exp-tag">Analytics</span>
+        <span class="exp-tag">Dashboards</span>
+        <span class="exp-tag">Finance</span>
+        <span class="exp-tag">Des Moines</span>
+      </div>
+    </article>
+    <article class="exp-card fade-up" data-hover>
+      <div class="exp-card-num">
+        <span>/ 02</span>
         <span class="status">Ongoing</span>
       </div>
       <h3 class="exp-card-title">Neobotics Foundation</h3>
@@ -926,7 +964,7 @@ footer a:hover{color:var(--accent)}
     </article>
     <article class="exp-card fade-up" data-hover>
       <div class="exp-card-num">
-        <span>/ 02</span>
+        <span>/ 03</span>
         <span class="status">Ongoing</span>
       </div>
       <h3 class="exp-card-title">Partnerships &amp; Outreach</h3>
@@ -941,7 +979,7 @@ footer a:hover{color:var(--accent)}
     </article>
     <article class="exp-card fade-up" data-hover>
       <div class="exp-card-num">
-        <span>/ 03</span>
+        <span>/ 04</span>
         <span class="status">Ongoing</span>
       </div>
       <h3 class="exp-card-title">Digital &amp; Tooling</h3>
@@ -1011,16 +1049,17 @@ footer a:hover{color:var(--accent)}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </span>
       </a>
-      <a href="mailto:jmr@neobotics.org" class="contact-link fade-up" data-hover>
+      <button type="button" class="contact-link fade-up" data-hover data-copy="jmr@neobotics.org" id="copyEmail">
         <span class="contact-link-num">/ 02</span>
         <span class="contact-link-content">
-          <span class="contact-link-label">Organization</span>
+          <span class="contact-link-label"><span class="copy-label">Tap to copy email</span><span class="copied-label">Copied to clipboard</span></span>
           <span class="contact-link-value">jmr@neobotics.org</span>
         </span>
         <span class="contact-link-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>
         </span>
-      </a>
+      </button>
     </div>
   </div>
 </section>
@@ -1028,7 +1067,7 @@ footer a:hover{color:var(--accent)}
 <footer>
   <span>© 2026 Jonathan Ran — Built with intention.</span>
   <div class="footer-meta">
-    <span>Boston, MA</span>
+    <span>Des Moines, IA</span>
     <a href="#" data-hover>Back to top ↑</a>
   </div>
 </footer>
@@ -1175,6 +1214,28 @@ footer a:hover{color:var(--accent)}
       btn.style.transform='';
     });
   });
+
+  // ===== Copy email to clipboard =====
+  const copyBtn = $('#copyEmail');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      const text = copyBtn.dataset.copy;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+          document.body.appendChild(ta); ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        copyBtn.classList.add('copied');
+        clearTimeout(copyBtn._t);
+        copyBtn._t = setTimeout(() => copyBtn.classList.remove('copied'), 1800);
+      } catch(e) {}
+    });
+  }
 
   // ===== Parallax portrait =====
   const portrait = $('.hero-portrait-wrap');
