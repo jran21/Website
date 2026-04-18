@@ -128,16 +128,6 @@ nav > *{pointer-events:auto}
   transition:width 0.4s var(--ease);
 }
 .nav-links a:hover::after{width:100%}
-.nav-time{
-  font-family:var(--mono);font-size:0.7rem;
-  letter-spacing:0.1em;text-transform:uppercase;
-  display:flex;align-items:center;gap:0.5rem;
-}
-.nav-time-dot{
-  width:6px;height:6px;border-radius:50%;background:#5ac85a;
-  box-shadow:0 0 8px #5ac85a;
-}
-
 /* ====== REVEAL ====== */
 .split-line{display:block;overflow:hidden;padding-bottom:0.05em}
 .split-line-inner{
@@ -729,10 +719,6 @@ footer a:hover{color:var(--accent)}
     <li><a href="#education" data-num="03" data-hover>Education</a></li>
     <li><a href="#contact" data-num="04" data-hover>Contact</a></li>
   </ul>
-  <div class="nav-time">
-    <span class="nav-time-dot"></span>
-    <span id="navClock">Available</span>
-  </div>
 </nav>
 
 <!-- HERO -->
@@ -1018,20 +1004,7 @@ footer a:hover{color:var(--accent)}
     progressBar.style.transform = `scaleX(${h > 0 ? st / h : 0})`;
   };
 
-  // ===== Nav clock / availability =====
-  const clock = $('#navClock');
-  const updateClock = () => {
-    const now = new Date();
-    const hr = now.getHours();
-    const m = String(now.getMinutes()).padStart(2,'0');
-    const mode = hr >= 9 && hr < 22 ? 'Available' : 'Offline';
-    const h12 = hr % 12 || 12;
-    clock.textContent = `${mode} — ${h12}:${m}`;
-  };
-  updateClock();
-  setInterval(updateClock, 30000);
-
-  // ===== Intersection Observer =====
+// ===== Intersection Observer =====
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
