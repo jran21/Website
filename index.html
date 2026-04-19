@@ -21,6 +21,7 @@
   --accent:#dc3d1f;
   --accent-hover:#b83217;
   --accent-soft:#f5c3b3;
+  --present:#1f7a3f;
   --paper:#faf6ec;
   --serif:'Fraunces','Times New Roman',serif;
   --sans:'Instrument Sans','Helvetica Neue',sans-serif;
@@ -440,6 +441,8 @@ section{padding:8rem 2.5rem;position:relative}
 .exp-card-num .status::before{
   content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;
 }
+.exp-card-num .status--present{color:var(--present)}
+.exp-card-num .status--present::before{background:var(--present)}
 .exp-card-title{
   font-family:var(--serif);font-weight:500;
   font-size:2rem;line-height:1.05;
@@ -947,7 +950,7 @@ footer a:hover{color:var(--accent)}
     <article class="exp-card fade-up" data-hover>
       <div class="exp-card-num">
         <span>/ 01</span>
-        <span class="status">May 2025 — Present</span>
+        <span class="status status--present">May 2025 — Present</span>
       </div>
       <h3 class="exp-card-title">Principal Financial Group</h3>
       <div class="exp-card-role">Business Intelligence Analyst I · Benefits &amp; Protection Data Analytics</div>
@@ -962,7 +965,7 @@ footer a:hover{color:var(--accent)}
     <article class="exp-card fade-up" data-hover>
       <div class="exp-card-num">
         <span>/ 02</span>
-        <span class="status">Nov 2025 — Present</span>
+        <span class="status status--present">Nov 2025 — Present</span>
       </div>
       <h3 class="exp-card-title">Neobotics Foundation Inc.</h3>
       <div class="exp-card-role">COO &amp; Co-Founder · 501(c)(3) Nonprofit</div>
