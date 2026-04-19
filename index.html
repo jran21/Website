@@ -51,23 +51,11 @@ img{display:block;max-width:100%}
   transition:width 0.3s var(--ease),height 0.3s var(--ease),background 0.3s var(--ease);
   mix-blend-mode:multiply;
 }
-.cursor-ring{
-  position:fixed;top:0;left:0;
-  width:40px;height:40px;
-  border:1px solid var(--paper);border-radius:50%;
-  pointer-events:none;z-index:10000;
-  transform:translate(-50%,-50%);
-  transition:width 0.4s var(--ease),height 0.4s var(--ease),border-color 0.4s var(--ease),opacity 0.3s ease;
-  opacity:0;
-}
-body.on-dark .cursor-ring{opacity:0.5}
 body.hovering .cursor{width:20px;height:20px;background:var(--accent)}
-body.on-dark.hovering .cursor-ring{width:60px;height:60px;border-color:var(--accent);opacity:0.4}
 body.text-hovering .cursor{width:3px;height:30px;border-radius:2px;background:var(--accent)}
-body.text-hovering .cursor-ring{opacity:0}
 @media(max-width:900px),(pointer:coarse){
   body{cursor:auto}
-  .cursor,.cursor-ring{display:none}
+  .cursor{display:none}
 }
 
 /* ====== GRAIN ====== */
@@ -800,7 +788,6 @@ footer a:hover{color:var(--accent)}
 <body>
 
 <div class="cursor"></div>
-<div class="cursor-ring"></div>
 <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
 
 <nav>
@@ -828,7 +815,7 @@ footer a:hover{color:var(--accent)}
       <br>
       <span class="word"><span class="word-inner">advocate.</span></span>
     </h1>
-    <p class="hero-desc fade-up">Jonathan Ran is the <strong>Chief Operating Officer</strong> of Neobotics Foundation — a 501(c)(3) nonprofit expanding access to robotics education for students who need it most.</p>
+    <p class="hero-desc fade-up">Jonathan Ran is a <strong>Business Intelligence Analyst</strong> at Principal Financial Group and <strong>Chief Operating Officer</strong> of Neobotics Foundation — a 501(c)(3) nonprofit expanding access to robotics education for students who need it most.</p>
     <div class="hero-ctas fade-up">
       <a href="#contact" class="btn btn-primary" data-hover>
         <span>Start a Conversation</span>
@@ -1079,19 +1066,9 @@ footer a:hover{color:var(--accent)}
 
   // ===== Custom cursor =====
   const cursor = $('.cursor');
-  const ring = $('.cursor-ring');
-  let mx=0,my=0,rx=0,ry=0;
   window.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%,-50%)`;
   });
-  const animRing = () => {
-    rx += (mx - rx) * 0.18;
-    ry += (my - ry) * 0.18;
-    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
-    requestAnimationFrame(animRing);
-  };
-  animRing();
 
   // Cursor hover states
   $$('[data-hover]').forEach(el => {
@@ -1101,11 +1078,6 @@ footer a:hover{color:var(--accent)}
   $$('input, textarea, p, h1, h2, h3, .hero-desc, .about-lead').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('text-hovering'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('text-hovering'));
-  });
-  // Show cursor ring only over dark-background sections
-  $$('.marquee, .contact, footer').forEach(el => {
-    el.addEventListener('mouseenter', () => document.body.classList.add('on-dark'));
-    el.addEventListener('mouseleave', () => document.body.classList.remove('on-dark'));
   });
 
   // ===== Progress bar =====
