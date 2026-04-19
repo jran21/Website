@@ -1,6 +1,6 @@
 # Jonathan Ran — Personal Site
 
-Source for **[jonathanran.com](https://jonathanran.com)** *(or wherever GitHub Pages serves this)* — the personal portfolio of **Jonathan Ran**, Business Intelligence Analyst at Principal Financial Group and COO / Co-Founder of [Neobotics Foundation Inc.](https://neobotics.org)
+Source for **[jonathanran.com](https://jran21.github.io/Website/)** *(or wherever GitHub Pages serves this)* — the personal portfolio of **Jonathan Ran**, Business Intelligence Analyst at Principal Financial Group and COO / Co-Founder of [Neobotics Foundation Inc.](https://neobotics.org)
 
 Single-page editorial-style site covering bio, work, education, and contact.
 
