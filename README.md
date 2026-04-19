@@ -1,6 +1,6 @@
 # Jonathan Ran — Personal Site
 
-Source for **[jonathanran.com](https://jran21.github.io/Website/)** *(or wherever GitHub Pages serves this)* — the personal portfolio of **Jonathan Ran**, Business Intelligence Analyst at Principal Financial Group and COO / Co-Founder of [Neobotics Foundation Inc.](https://neobotics.org)
+Source for **[jran21.github.io](https://jran21.github.io/)** — the personal portfolio of **Jonathan Ran**, Business Intelligence Analyst at Principal Financial Group and COO / Co-Founder of [Neobotics Foundation Inc.](https://neobotics.org)
 
 Single-page editorial-style site covering bio, work, education, and contact.
 
@@ -36,9 +36,10 @@ Then visit `http://localhost:8000`.
 
 ```
 .
-├── index.html      ← entire site (HTML + CSS + JS inline)
-├── headshot.jpg    ← hero portrait
-├── bu-logo.webp    ← Boston University logo (Education section)
+├── index.html               ← entire site (HTML + CSS + JS inline)
+├── headshot.jpg             ← hero portrait (also used for OG/Twitter preview)
+├── bu-logo.webp             ← Boston University logo (Education section)
+├── Jonathan_Ran_Resume.pdf  ← served by the "Resume" CTA in the hero
 └── README.md
 ```
 
