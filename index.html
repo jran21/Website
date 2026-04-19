@@ -30,7 +30,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -74,6 +74,7 @@ img{display:block;max-width:100%}
   transform:translate(-50%,-50%);
   transition:width 0.3s var(--ease),height 0.3s var(--ease),background 0.3s var(--ease);
   mix-blend-mode:multiply;
+  will-change:transform;
 }
 body.hovering .cursor{width:20px;height:20px;background:var(--accent)}
 body.text-hovering .cursor{width:3px;height:30px;border-radius:2px;background:var(--accent)}
@@ -136,14 +137,6 @@ nav > *{pointer-events:auto}
 }
 .nav-links a:hover::after{width:100%}
 /* ====== REVEAL ====== */
-.split-line{display:block;overflow:hidden;padding-bottom:0.05em}
-.split-line-inner{
-  display:block;
-  transform:translateY(110%);
-  transition:transform 1s var(--ease);
-}
-.split-line.in .split-line-inner{transform:translateY(0)}
-
 .word-reveal .word{
   display:inline-block;overflow:hidden;vertical-align:baseline;
 }
@@ -327,6 +320,7 @@ nav > *{pointer-events:auto}
   font-size:clamp(3rem,7vw,6rem);
   font-weight:400;line-height:1;
   letter-spacing:-0.02em;
+  will-change:transform;
 }
 .marquee:hover .marquee-track{animation-play-state:paused}
 .marquee-item{
@@ -879,7 +873,7 @@ footer a:hover{color:var(--accent)}
   <div class="hero-portrait scale-in">
     <span class="hero-portrait-tag">EST. 2003 — Boston, MA</span>
     <div class="hero-portrait-wrap" data-hover>
-      <img src="headshot.jpg" alt="Jonathan Ran" class="hero-portrait-img">
+      <img src="headshot.jpg" alt="Jonathan Ran" class="hero-portrait-img" width="1200" height="1500" fetchpriority="high" decoding="async">
     </div>
     <div class="hero-portrait-badge">
       <span class="hero-portrait-badge-inner">Mission-First · Operations · Strategy ·&nbsp;</span>
@@ -1078,7 +1072,7 @@ footer a:hover{color:var(--accent)}
   </div>
   <div class="edu-feature">
     <div class="edu-logo-wrap scale-in" data-hover>
-      <img src="bu-logo.webp" alt="Boston University" class="edu-logo">
+      <img src="bu-logo.webp" alt="Boston University" class="edu-logo" width="1919" height="859" loading="lazy" decoding="async">
     </div>
     <div class="edu-info fade-up">
       <div class="edu-info-inner">
@@ -1155,25 +1149,37 @@ footer a:hover{color:var(--accent)}
   // ===== Custom cursor =====
   const cursor = $('.cursor');
   const darkSections = $$('.marquee, .contact, footer');
-  window.addEventListener('mousemove', e => {
-    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%,-50%)`;
+  // Cache dark-section rects; refresh on scroll/resize instead of every mousemove
+  let darkRects = [];
+  const refreshDarkRects = () => {
+    darkRects = darkSections.map(s => s.getBoundingClientRect());
+  };
+  refreshDarkRects();
+  window.addEventListener('scroll', refreshDarkRects, { passive: true });
+  window.addEventListener('resize', refreshDarkRects);
+
+  let cursorRaf = 0, lastX = 0, lastY = 0;
+  const updateCursor = () => {
+    cursorRaf = 0;
+    cursor.style.transform = `translate(${lastX}px, ${lastY}px) translate(-50%,-50%)`;
     let overDark = false;
-    for (const sec of darkSections) {
-      const r = sec.getBoundingClientRect();
-      if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
-        overDark = true;
-        break;
-      }
+    for (const r of darkRects) {
+      if (lastX >= r.left && lastX <= r.right && lastY >= r.top && lastY <= r.bottom) { overDark = true; break; }
     }
     document.body.classList.toggle('cursor-dark-bg', overDark);
-  });
+  };
+  window.addEventListener('mousemove', e => {
+    lastX = e.clientX; lastY = e.clientY;
+    if (!cursorRaf) cursorRaf = requestAnimationFrame(updateCursor);
+  }, { passive: true });
 
   // Cursor hover states
   $$('[data-hover]').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
   });
-  $$('input, textarea, p, h1, h2, h3, .hero-desc, .about-lead').forEach(el => {
+  // Narrow text-caret cursor to actual reading targets (not every p/h*)
+  $$('.hero-desc, .about-lead, .about-body-text, .exp-card-desc, .edu-prose, .contact-lead').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('text-hovering'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('text-hovering'));
   });
@@ -1196,7 +1202,7 @@ footer a:hover{color:var(--accent)}
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
 
-  $$('.fade-up, .fade-in, .scale-in, .split-line').forEach(el => io.observe(el));
+  $$('.fade-up, .fade-in, .scale-in').forEach(el => io.observe(el));
 
   // Word reveals with stagger
   $$('.word-reveal').forEach(parent => {
@@ -1255,20 +1261,24 @@ footer a:hover{color:var(--accent)}
   // ===== Horizontal scroll via vertical wheel on experience =====
   const expScroll = $('#expScroll');
   if (expScroll) {
-    // Drag to scroll
-    let isDown=false, startX=0, scrollL=0;
-    expScroll.addEventListener('mousedown', e => {
-      isDown=true;
-      startX = e.pageX - expScroll.offsetLeft;
-      scrollL = expScroll.scrollLeft;
-      expScroll.style.cursor='grabbing';
-    });
-    window.addEventListener('mouseup', () => { isDown=false; expScroll.style.cursor='' });
-    window.addEventListener('mousemove', e => {
-      if (!isDown) return;
+    // Drag to scroll — attach mousemove only while dragging
+    let startX=0, scrollL=0;
+    const onDragMove = e => {
       e.preventDefault();
       const x = e.pageX - expScroll.offsetLeft;
       expScroll.scrollLeft = scrollL - (x - startX) * 1.5;
+    };
+    const endDrag = () => {
+      window.removeEventListener('mousemove', onDragMove);
+      window.removeEventListener('mouseup', endDrag);
+      expScroll.style.cursor='';
+    };
+    expScroll.addEventListener('mousedown', e => {
+      startX = e.pageX - expScroll.offsetLeft;
+      scrollL = expScroll.scrollLeft;
+      expScroll.style.cursor='grabbing';
+      window.addEventListener('mousemove', onDragMove);
+      window.addEventListener('mouseup', endDrag);
     });
 
     // Prev/next arrows
@@ -1295,15 +1305,22 @@ footer a:hover{color:var(--accent)}
     }
   }
 
-  // ===== Magnetic buttons =====
+  // ===== Magnetic buttons — rAF-throttled =====
   $$('.btn').forEach(btn => {
-    btn.addEventListener('mousemove', e => {
-      const r = btn.getBoundingClientRect();
-      const x = e.clientX - r.left - r.width/2;
-      const y = e.clientY - r.top - r.height/2;
+    let raf = 0, ex = 0, ey = 0, rect = null;
+    const apply = () => {
+      raf = 0;
+      const x = ex - rect.left - rect.width/2;
+      const y = ey - rect.top - rect.height/2;
       btn.style.transform = `translate(${x*0.2}px, ${y*0.3}px)`;
-    });
+    };
+    btn.addEventListener('mouseenter', () => { rect = btn.getBoundingClientRect(); });
+    btn.addEventListener('mousemove', e => {
+      ex = e.clientX; ey = e.clientY;
+      if (!raf) raf = requestAnimationFrame(apply);
+    }, { passive: true });
     btn.addEventListener('mouseleave', () => {
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
       btn.style.transform='';
     });
   });
@@ -1330,19 +1347,28 @@ footer a:hover{color:var(--accent)}
     });
   }
 
-  // ===== Parallax portrait =====
+  // ===== Parallax portrait — rAF-throttled, rect cached on enter =====
   const portrait = $('.hero-portrait-wrap');
   if (portrait) {
     const heroSection = $('.hero');
-    heroSection.addEventListener('mousemove', e => {
-      const r = heroSection.getBoundingClientRect();
-      const x = ((e.clientX - r.left) / r.width - 0.5) * 12;
-      const y = ((e.clientY - r.top) / r.height - 0.5) * 12;
+    let raf = 0, ex = 0, ey = 0, rect = null;
+    const apply = () => {
+      raf = 0;
+      const x = ((ex - rect.left) / rect.width - 0.5) * 12;
+      const y = ((ey - rect.top) / rect.height - 0.5) * 12;
       portrait.style.transform = `translate(${x}px, ${y}px)`;
-    });
+    };
+    heroSection.addEventListener('mouseenter', () => { rect = heroSection.getBoundingClientRect(); });
+    heroSection.addEventListener('mousemove', e => {
+      if (!rect) rect = heroSection.getBoundingClientRect();
+      ex = e.clientX; ey = e.clientY;
+      if (!raf) raf = requestAnimationFrame(apply);
+    }, { passive: true });
     heroSection.addEventListener('mouseleave', () => {
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
       portrait.style.transform = '';
     });
+    window.addEventListener('resize', () => { rect = null; });
   }
 })();
 </script>
