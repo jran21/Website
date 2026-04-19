@@ -77,6 +77,13 @@ img{display:block;max-width:100%}
 }
 body.hovering .cursor{width:20px;height:20px;background:var(--accent)}
 body.text-hovering .cursor{width:3px;height:30px;border-radius:2px;background:var(--accent)}
+/* Over dark sections: switch to cream/tan and drop multiply blend for visibility */
+body.cursor-dark-bg .cursor,
+body.cursor-dark-bg.hovering .cursor,
+body.cursor-dark-bg.text-hovering .cursor{
+  background:var(--paper);
+  mix-blend-mode:normal;
+}
 @media(max-width:900px),(pointer:coarse){
   body{cursor:auto}
   .cursor{display:none}
@@ -1147,8 +1154,18 @@ footer a:hover{color:var(--accent)}
 
   // ===== Custom cursor =====
   const cursor = $('.cursor');
+  const darkSections = $$('.marquee, .contact, footer');
   window.addEventListener('mousemove', e => {
     cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%,-50%)`;
+    let overDark = false;
+    for (const sec of darkSections) {
+      const r = sec.getBoundingClientRect();
+      if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+        overDark = true;
+        break;
+      }
+    }
+    document.body.classList.toggle('cursor-dark-bg', overDark);
   });
 
   // Cursor hover states
